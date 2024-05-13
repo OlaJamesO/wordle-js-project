@@ -19,16 +19,55 @@ async function init() {
     isLoading = false;
     setLoading(isLoading);
 
+    // Dynamically generate scoreboard letters
+    const scoreboard = document.querySelector(".scoreboard");
+
+    for (let i = 0; i < ANSWER_LENGTH * ROUNDS; i++) {
+        const letterDiv = document.createElement("div");
+        letterDiv.classList.add("scoreboard-letter");
+        letterDiv.id = `letter-${i}`;
+        scoreboard.appendChild(letterDiv);
+    }
+    // Select the dydnamic generated scoreboard letters
+    const letters = document.querySelectorAll(".scoreboard-letter");
+
     // user adds a letter to the current guess
+
+    function addLetterToScoreboard(letter, index) {
+        const letterDiv = document.getElementById(`letter-${index}`);
+        if (letterDiv) {
+            letterDiv.textContent = letter;
+        }
+    }
+
+    let gameOver = false;
+
     function addLetter(letter) {
+        if (gameOver) {
+            return;
+        }
+
         if (currentGuess.length < ANSWER_LENGTH) {
             currentGuess += letter;
         } else {
-            current = currentGuess.substring(0, currentGuess.length - 1) + letter;
+            currentGuess = currentGuess.substring(0, currentGuess.length - 1) + letter;
         }
 
-        letters[currentRow * ANSWER_LENGTH + currentGuess.length - 1].innerText = 
-        letter;
+        addLetterToScoreboard(letter, currentRow * ANSWER_LENGTH + currentGuess.length - 1);
+
+        if (currentGuess === word) {
+            gameOver = true;
+            greyOutRemainingBoxes();
+        }
+    }
+
+    function greyOutRemainingBoxes() {
+        for (let i = currentRow * ANSWER_LENGTH + currentGuess.length; i < MAX_TRIES * ANSWER_LENGTH; i++) {
+            const letterDiv = document.getElementById(`letter-${i}`);
+            if (letterDiv) {
+                letterDiv.classList.add('greyed-out');
+            }
+        }
     }
 
     // user try to enter a guess 
@@ -87,22 +126,23 @@ async function init() {
 
         currentRow++;
         currentGuess = "";
+        // Display result message above scoreboard
+        // Display result message above scoreboard
+        const resultMessage = document.querySelector('.result-message');
         if (allRight) {
-            // win
-            alert("You win!");
+            resultMessage.textContent = `You win! The word of the day is ${word}!!.. Congratulations! 🎉`;
             document.querySelector(".brand").classList.add("winner");
-            done = true;
         } else if (currentRow === ROUNDS) {
-            // lose
-            alert(`You lose!, the word was ${word}`);
-            done = true;
+            resultMessage.textContent = `You tried your best! The word of the day is ${word}. Better luck next time! 🤗`;
         }
+        resultMessage.parentNode.classList.remove('hidden'); // Remove hidden class from the parent container
     }
+
 
     // user hits backspace, if the the length of the string is 0 then do nothing
 
     function backspace() {
-     
+
         currentGuess = currentGuess.substring(0, currentGuess.length - 1);
         letters[currentRow * ANSWER_LENGTH + currentGuess.length].innerText = "";
     }
@@ -123,7 +163,11 @@ async function init() {
 
     // listening for event keys and routing to the right function
     // we listen on keydown so we can catch Enter and Backspace
-    document.addEventListener("keydown", function handleKeyPress(event) {
+    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchend", handleTouchEnd);
+
+    function handleKeyPress(event) {
         if (done || isLoading) {
             // do nothing
             return;
@@ -139,7 +183,51 @@ async function init() {
         } else {
             // do nothing
         }
+    }
+
+    const hiddenInput = document.getElementById("hidden-input");
+    hiddenInput.addEventListener('input', function (event) {
+        const input = event.target.value.toUpperCase();
+        if (input) {
+            addLetter(input);
+            hiddenInput.value = '';
+        }
     });
+
+    function handleTouchStart(event) {
+        event.preventDefault();
+        if (done || isLoading) {
+            // do nothing
+            return;
+        }
+
+
+        let target = event.target;
+        // Traverse up the DOM hierarchy until a scoreboard-letter element is found
+        while (target && !target.classList.contains("scoreboard-letter")) {
+            target = target.parentElement;
+        }
+
+        if (target) {
+            hiddenInput.focus();
+            const action = target.innerText;
+            if (action) {
+                addLetter(action.toUpperCase());
+            }
+        }
+    }
+
+    function handleTouchEnd(event) {
+        event.preventDefault();
+        if (done || isLoading) {
+            // do nothing
+            return;
+        }
+
+
+
+        commit();
+    }
 }
 
 // a little function to check to see if a character is alphabet letter

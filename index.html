@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Word Master</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header class="navbar">
-        <h1 class="brand">Word Masters</h1>
+      <h1 class="brand">Word Masters</h1>
+      <a href="https://olajames.com/" target="_blank" class="link">@OlaJames</a>
     </header>
     <div class="info-bar">
-        <div class="spiral">🌀</div>
+      <div class="spiral">🌀</div>
     </div>
-    <div class="scoreboard">
-        <div class="scoreboard-letter" id="letter-0"></div>
-        <div class="scoreboard-letter" id="letter-1"></div>
-        <div class="scoreboard-letter" id="letter-2"></div>
-        <div class="scoreboard-letter" id="letter-3"></div>
-        <div class="scoreboard-letter" id="letter-4"></div> 
-        <div class="scoreboard-letter" id="letter-5"></div>
-        <div class="scoreboard-letter" id="letter-6"></div>
-        <div class="scoreboard-letter" id="letter-7"></div>
-        <div class="scoreboard-letter" id="letter-8"></div>
-        <div class="scoreboard-letter" id="letter-9"></div>
-        <div class="scoreboard-letter" id="letter-10"></div>
-        <div class="scoreboard-letter" id="letter-11"></div>
-        <div class="scoreboard-letter" id="letter-12"></div>
-        <div class="scoreboard-letter" id="letter-13"></div>
-        <div class="scoreboard-letter" id="letter-14"></div>
-        <div class="scoreboard-letter" id="letter-15"></div>
-        <div class="scoreboard-letter" id="letter-16"></div>
-        <div class="scoreboard-letter" id="letter-17"></div>
-        <div class="scoreboard-letter" id="letter-18"></div>
-        <div class="scoreboard-letter" id="letter-19"></div>
-        <div class="scoreboard-letter" id="letter-20"></div>
-        <div class="scoreboard-letter" id="letter-21"></div>
-        <div class="scoreboard-letter" id="letter-22"></div>
-        <div class="scoreboard-letter" id="letter-23"></div>
-        <div class="scoreboard-letter" id="letter-24"></div>
-        <div class="scoreboard-letter" id="letter-25"></div>
-        <div class="scoreboard-letter" id="letter-26"></div>
-        <div class="scoreboard-letter" id="letter-27"></div>
-        <div class="scoreboard-letter" id="letter-28"></div>
-        <div class="scoreboard-letter" id="letter-29"></div>
+    <div class="result-container hidden">
+      <h2 class="result-message word-of-the-day"></h2>
+    </div>
+
+    <div class="scoreboard"></div>
+    <input type="text" id="hidden-input" style="opacity: 0; position: absolute;">
+
+    <div class="instructions">
+      <h2>How to Play - <span style="color:  darkgreen;">ↆ</span></h2>
+      <ul>
+        <li>Guess the word of the day by entering 5 letters.</li>
+        <li>
+          Each letter should be in its correct position to be marked as correct.
+        </li>
+        <li>
+          If a letter is in the word but in the wrong position, it will be
+          marked as close.
+        </li>
+        <li>
+          If a letter is not in the word at all, it will be marked as wrong.
+        </li>
+        <li>
+          If the input is not a word, it will be marked as not a word by
+          flashing red.
+        </li>
+      </ul>
+    </div>
+    <div class="color-indicators">
+      <h2>Color Indicators - <span style="color:  goldenrod;">ↆ</h2>
+      <div class="color-box correct"></div>
+      <span>Correct Letter</span>
+      <div class="color-box close"></div>
+      <span>Close, But Wrong Position</span>
+      <div class="color-box wrong"></div>
+      <span>Incorrect Letter</span>
+      <div class="color-box not-word"></div>
+      <span>Not a Word</span>
     </div>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
