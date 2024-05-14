@@ -13,6 +13,9 @@ async function init() {
 
     // nab the word of the day
     const response = await fetch("https://words.dev-apis.com/word-of-the-day");
+    if (!response.ok) {
+        throw new Error("Failed to fetch word of the day")
+    }
     const { word: wordResponse } = await response.json();
     const word = wordResponse.toUpperCase();
     const wordParts = word.split("");
@@ -59,6 +62,9 @@ async function init() {
             gameOver = true;
             greyOutRemainingBoxes();
         }
+        // clear the hidden input field after adding a letter
+        // Update the hidden input field
+        hiddenInput.value = currentGuess;
     }
 
     function greyOutRemainingBoxes() {
@@ -85,6 +91,10 @@ async function init() {
             method: "POST",
             body: JSON.stringify({ word: currentGuess }),
         });
+        if (!response.ok) {
+            throw new Error("Failed to validate word");
+        }
+
         const { validWord } = await response.json();
         isLoading = false;
         setLoading(isLoading);
@@ -141,11 +151,20 @@ async function init() {
 
     // user hits backspace, if the the length of the string is 0 then do nothing
 
-    function backspace() {
+    function backspace(event) {
+        if (currentGuess.length > 0) {
+            currentGuess = currentGuess.substring(0, currentGuess.length - 1);
+            letters[currentRow * ANSWER_LENGTH + currentGuess.length].innerText = "";
 
-        currentGuess = currentGuess.substring(0, currentGuess.length - 1);
-        letters[currentRow * ANSWER_LENGTH + currentGuess.length].innerText = "";
+
+
+            // Prevent the backspace key from affecting the hidden input field
+            if (event) {
+                event.preventDefault();
+            }
+        }
     }
+
 
     // let the user know that their guess wasn't a real word
     // skip this if you're not doing guess validation
@@ -177,6 +196,7 @@ async function init() {
         if (action === "Enter") {
             commit();
         } else if (action === "Backspace") {
+            event.preventDefault();
             backspace();
         } else if (isLetter(action)) {
             addLetter(action.toUpperCase());
@@ -190,8 +210,10 @@ async function init() {
         const input = event.target.value.toUpperCase();
         if (input) {
             addLetter(input);
-            hiddenInput.value = '';
+        } else if (currentGuess.length > 0 && currentGuess.slice(-1) !== input.slice(-1)) {
+            backspace();
         }
+        hiddenInput.value = '';
     });
 
     function handleTouchStart(event) {
@@ -227,6 +249,8 @@ async function init() {
 
 
         commit();
+
+        hiddenInput.value = '';
     }
 }
 
@@ -260,3 +284,9 @@ function makeMap(array) {
 }
 
 init();
+
+// rewrite the script to simlessly work will with touch events
+// modify the hidden input field backspace behavior... backspace should remove the last letter scoreboard-letter element on press and not the hidden input field value
+// add a message above the scoreboard to display the result of the game (done)
+
+
